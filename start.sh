@@ -2,15 +2,29 @@
 
 REPOSITORY=$REPO
 ACCESS_TOKEN=$TOKEN
+RUNNER_NAME=${NAME:-$(hostname)}
 
 echo "REPO ${REPOSITORY}"
-echo "ACCESS_TOKEN ${ACCESS_TOKEN}"
+echo "RUNNER_NAME ${RUNNER_NAME}"
 
-REG_TOKEN=$(curl -X POST -H "Authorization: token ${ACCESS_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/repos/${REPOSITORY}/actions/runners/registration-token | jq .token --raw-output)
+if [ -z "${REPOSITORY}" ] || [ -z "${ACCESS_TOKEN}" ]; then
+    echo "REPOSITORY or ACCESS_TOKEN is not set"
+    exit 1
+fi
+
+# POST /orgs/{org}/actions/runners/registration-token
+# POST /repos/{org}/{repo}/actions/runners/registration-token
+if [[ "${REPOSITORY}" =~ / ]]; then
+    ENTITY="repos/${REPOSITORY}"
+else
+    ENTITY="orgs/${REPOSITORY}"
+fi
+echo "ENTITY ${ENTITY}"
+REG_TOKEN=$(curl -X POST -H "Authorization: token ${ACCESS_TOKEN}" -H "Accept: application/vnd.github+json" https://api.github.com/${ENTITY}/actions/runners/registration-token | jq .token --raw-output)
 
 cd /home/docker/actions-runner
 
-./config.sh --url https://github.com/${REPOSITORY} --token ${REG_TOKEN}
+./config.sh --url https://github.com/${REPOSITORY} --token ${REG_TOKEN} --name ${RUNNER_NAME}
 
 cleanup() {
     echo "Removing runner..."
