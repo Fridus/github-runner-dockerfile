@@ -6,3 +6,37 @@ When running the docker image, or when executing docker compose, environment var
 Credit to [testdriven.io](https://testdriven.io/blog/github-actions-docker/) for the original start.sh script, which I slightly modified to make it work with a regular repository rather than with an enterprise. 
 
 Whene generating your GitHub PAT you will need to include `repo`, `workflow`, and `admin:org` permissions.
+
+------
+
+## Pull image
+
+```
+docker pull fridus/github-runner
+```
+
+## Create access token
+
+To create an access token, go to [Personal access tokens](https://github.com/settings/personal-access-tokens/new) and create a new token.
+
+Permission `Self-hosted runners` is required to create a runner on a organization.
+
+## Docker compose
+
+```bash
+docker compose up -d
+```
+
+Example of `.env` file:
+
+```bash
+REPO=fridus/my-repo
+TOKEN=your-token
+NAME=my-runner
+```
+
+## Build image
+
+```bash
+docker buildx build --platform linux/amd64,linux/arm64/v8 -t fridus/github-runner:latest --push .
+```
