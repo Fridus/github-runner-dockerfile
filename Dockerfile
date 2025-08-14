@@ -8,12 +8,13 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG TARGETPLATFORM
 
 RUN apt update -y && apt upgrade -y && \
-    apt --no-install-recommends install -y ca-certificates && \
-    useradd -m docker
-
+    apt --no-install-recommends install -y ca-certificates
 RUN apt install -y --no-install-recommends \
-    curl jq build-essential libssl-dev libffi-dev libicu-dev python3 python3-venv python3-dev python3-pip && \
+    curl jq build-essential libssl-dev libffi-dev libicu-dev python3 python3-venv python3-dev python3-pip sudo && \
     apt clean -y
+
+RUN useradd -m docker && \
+    echo "docker      ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/docker
 
 RUN cd /home/docker && mkdir actions-runner && cd actions-runner && \
     if [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
