@@ -2,7 +2,12 @@
 
 REPOSITORY=$REPO
 ACCESS_TOKEN=$TOKEN
-RUNNER_NAME=${NAME:-$(hostname)}
+
+if [ -z "${NAME}" ]; then
+    RUNNER_NAME=$(hostname)
+else
+    RUNNER_NAME=${NAME}-$(hostname)
+fi
 
 echo "REPO ${REPOSITORY}"
 echo "RUNNER_NAME ${RUNNER_NAME}"
