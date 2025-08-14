@@ -11,9 +11,23 @@ Whene generating your GitHub PAT you will need to include `repo`, `workflow`, an
 
 ## Pull image
 
-```
+```sh
 docker pull fridus/github-runner
 ```
+
+## Usage
+
+```sh
+docker run -d --name github-runner \
+    -e REPO=your-org/your-repo \
+    -e TOKEN=your-token \
+    -e NAME=your-runner-name \
+    fridus/github-runner:latest
+```
+
+- `REPO` is the repository to register the runner to. Required.
+- `TOKEN` is the personal access token to use to register the runner. Required.
+- `NAME` is the name of the runner (used as a prefix for the runner name). Optional.
 
 ## Create access token
 
